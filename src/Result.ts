@@ -1,24 +1,23 @@
 import { Document } from './Document';
-import { RedisArg } from './RedisSearch';
+import { RedisField } from './Client';
 
 export class Result {
   /*
         Represents the result of a search query, and has an array of Document objects
     */
 
-  public total: RedisArg;
+  public total: number;
   public duration: number;
-  public docs = [];
+  public docs: Document[] = [];
 
   constructor(
-    response: RedisArg[],
+    response: any,
     hasContent: boolean,
     options?: {
       hasPayload: boolean;
       duration: number;
     },
   ) {
-    console.log(response);
     /*
             - **snippets**: An optional dictionary of the form {field: snippet_size} for snippet formatting
         */
@@ -42,24 +41,16 @@ export class Result {
       const payload = hasPayload ? response[i + 1] : null;
       const fieldOffsets = hasPayload ? 2 : 1;
 
-      const fields = {};
+      const fields:{ [F in RedisField]: RedisField } = {};
 
       if (hasContent) {
-        response[i + fieldOffsets].forEach((field, index) => {
+        response[i + fieldOffsets].forEach((field: RedisField, index:number) => {
           if (index % 2 === 0) {
             fields[field] = response[i + fieldOffsets][index + 1];
           }
         });
       }
-
-      Object.keys(fields).forEach(fieldName => {
-        const field = fields[fieldName];
-        if (typeof field.id !== 'undefined') {
-          delete field.id;
-        }
-      });
-
-      const doc = new Document(id, { payload }, fields);
+      const doc = new Document(id,fields, { payload });
 
       this.docs.push(doc);
     }

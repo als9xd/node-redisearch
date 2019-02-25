@@ -5,7 +5,13 @@ export class NumericField extends Field {
         NumericField is used to define a numeric field in a schema defintion
     */
 
-  constructor(name: string, options?) {
+  constructor(
+    name: string,
+    options?: {
+      sortable: boolean;
+      noIndex: boolean;
+    },
+  ) {
     const { sortable = false, noIndex = false } = options || {};
 
     const args = [Field.NUMERIC];

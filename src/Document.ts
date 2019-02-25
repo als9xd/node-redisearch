@@ -1,15 +1,10 @@
-import { Field } from './field/Field';
-import { FieldsObject } from './RedisSearch';
+import { RedisField } from './Client';
 
 export class Document {
-  /*
-        Represents a single document in a result set 
-    */
+  public id: RedisField;
+  public payload: RedisField | null;
 
-  public id: number | string;
-  public payload: any;
-
-  constructor(id: number | string, fields: FieldsObject = {}, options?: { payload?: string }) {
+  constructor(id: RedisField, fields: { [F in RedisField]: RedisField } = {}, options?: { payload?: RedisField }) {
     this.id = id;
 
     const { payload = null } = options || {};

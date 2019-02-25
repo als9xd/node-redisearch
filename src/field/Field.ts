@@ -1,3 +1,5 @@
+import { RedisField } from '../Client';
+
 export class Field {
   protected static readonly NUMERIC = 'NUMERIC';
   protected static readonly TEXT = 'TEXT';
@@ -8,10 +10,10 @@ export class Field {
   protected static readonly NOINDEX = 'NOINDEX';
   protected static readonly SEPARATOR = 'SEPARATOR';
 
-  public name: string;
-  public args: string[];
+  public name: RedisField;
+  public args: RedisField[];
 
-  constructor(name: string, args = []) {
+  constructor(name: RedisField, args: RedisField[] = []) {
     this.name = name;
     this.args = args;
   }

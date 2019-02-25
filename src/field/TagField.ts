@@ -6,7 +6,13 @@ export class TagField extends Field {
         See http://redisearch.io/Tags/
     */
 
-  constructor(name: string, options?) {
+  constructor(
+    name: string,
+    options?: {
+      seperator: string;
+      noIndex: boolean;
+    },
+  ) {
     super(name, [Field.TAG]);
 
     const { seperator = ',', noIndex = false } = options || {};

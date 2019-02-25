@@ -3,14 +3,14 @@ import { Field } from './field/Field';
 import { Query } from './Query';
 import { Result } from './Result';
 
-const redis = require('redis');
+export type Languages = 'english' | 'chinese';
+export type LanguagePhonetics = 'dm:en' | 'dm:fr' | 'dm:pt' | 'dm:es';
 
-export type Languages = 'dm:en' | 'dm:fr' | 'dm:pt' | 'dm:es';
+export type RedisField = string | number;
 
-export type FieldName = string;
-export type FieldsObject = { [s: string]: string | number };
-export type RedisArg = string | number;
+import * as redis from 'redis';
 
+/** @type {Client} */
 export class Client {
   /*
         A client for the RediSearch module. 
@@ -34,11 +34,11 @@ export class Client {
 
   // Double Metaphone for English, French, Portuguese, Spanish
 
-  public indexName: string;
+  public indexName: RedisField;
   public redis: any;
 
   constructor(
-    indexName: string,
+    indexName: RedisField,
     options?: {
       host: string;
       port: number;
@@ -64,12 +64,17 @@ export class Client {
     }
   }
 
+  /**
+   * My middleware
+   * @param {Request} req Express Request...
+   * @param {Response} res Express Response...
+   */
   public create(
     fields: Field[] = [],
     options?: {
       noTermOffsets: boolean;
       noFieldFlags: boolean;
-      stopWords: string | number | Array<string | number>;
+      stopWords: RedisField | RedisField[];
     },
   ): Promise<boolean> {
     /*
@@ -84,7 +89,7 @@ export class Client {
 
     const { noTermOffsets = false, noFieldFlags = false, stopWords = null } = options || {};
 
-    const args: Array<string | number> = [this.indexName];
+    const args: RedisField[] = [this.indexName];
 
     if (noTermOffsets) {
       args.push(Client.NOOFFSETS);
@@ -102,7 +107,6 @@ export class Client {
 
     args.push('SCHEMA');
 
-    console.log(JSON.stringify(fields))
     fields.forEach(field => args.push(field.name, ...field.args));
 
     return new Promise((resolve, reject) => {
@@ -132,7 +136,7 @@ export class Client {
 
   public add(
     id: string | number,
-    fields: FieldsObject = {},
+    fields: { [F in RedisField]: RedisField } = {},
     options?: {
       noSave: boolean;
       replace: boolean;
@@ -243,10 +247,10 @@ export class Client {
     });
   }
 
-  public _mkQueryArgs(query: string | Query) {
-    const args: Array<string | number> = [this.indexName];
+  public _mkQueryArgs(query: RedisField | Query): { args: RedisField[]; query: Query } {
+    const args: RedisField[] = [this.indexName];
 
-    if (typeof query === 'string') {
+    if (!(query instanceof Query)) {
       query = new Query(query);
     }
 
@@ -255,7 +259,7 @@ export class Client {
     return { args, query };
   }
 
-  public search(query: string | Query): Promise<Result> {
+  public search(query: RedisField | Query): Promise<Result> {
     /*
         Search the index for a given query, and return a result of documents
             ### Parameters
@@ -267,30 +271,30 @@ export class Client {
     const queryArgs = this._mkQueryArgs(query);
 
     const builtQuery = queryArgs.query;
-    const args: Array<string | number> = queryArgs.args;
+    const args: RedisField[] = queryArgs.args;
 
     const st = new Date().getTime();
 
     return new Promise((resolve, reject) => {
-      this.redis.send_command(Client.SEARCH_CMD, args, (err: Error, response: string[]) => {
+      this.redis.send_command(Client.SEARCH_CMD, args, (err: Error, response: any) => {
         if (err) {
           return reject(err);
         }
         resolve(
-          new Result(response, builtQuery.hasContent(), {
-            duration: (new Date().getTime() - st) * 1000.0,
-            hasPayload: builtQuery.withPayloads,
+          new Result(response, !builtQuery._noContent, {
+            duration: (new Date().getTime() - st) * 1000,
+            hasPayload: builtQuery._withPayloads,
           }),
         );
       });
     });
   }
 
-  public explain(query: string | Query): Promise<string> {
+  public explain(query: RedisField | Query): Promise<string> {
     const queryArgs = this._mkQueryArgs(query);
 
     query = queryArgs.query;
-    const args: Array<string | number> = queryArgs.args;
+    const args: RedisField[] = queryArgs.args;
 
     return new Promise((resolve, reject) => {
       this.redis.send_command(

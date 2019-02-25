@@ -1,7 +1,9 @@
-export class Filter {
-  public args: Array<string | number>;
+import { RedisField } from '../Client';
 
-  constructor(keyword: string, field: string, args?: Array<string | number>) {
+export class Filter {
+  public args: RedisField[];
+
+  constructor(keyword: string, field: RedisField, args: RedisField[] = []) {
     this.args = [keyword, field, ...args];
   }
 }

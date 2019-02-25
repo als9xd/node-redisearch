@@ -1,10 +1,12 @@
 import { Filter } from './Filter';
 
+type Unit = 'm' | 'km' | 'ft' | 'mi';
+
 export class GeoFilter extends Filter {
-  public static readonly METERS = 'm';
-  public static readonly KILOMETERS = 'km';
-  public static readonly FEET = 'ft';
-  public static readonly MILES = 'mi';
+  public static readonly METERS: Unit = 'm';
+  public static readonly KILOMETERS: Unit = 'km';
+  public static readonly FEET: Unit = 'ft';
+  public static readonly MILES: Unit = 'mi';
 
   constructor(
     field: string,
@@ -12,7 +14,7 @@ export class GeoFilter extends Filter {
     lat: number,
     radius: number,
     options?: {
-      unit: 'm' | 'km' | 'ft' | 'mi';
+      unit: Unit;
     },
   ) {
     const { unit = GeoFilter.KILOMETERS } = options || {};

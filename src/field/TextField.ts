@@ -1,3 +1,4 @@
+import { RedisField } from '../Client';
 import { Field } from './Field';
 
 export class TextField extends Field {
@@ -7,10 +8,18 @@ export class TextField extends Field {
 
   public static readonly NOSTEM = 'NOSTEM';
 
-  constructor(name: string, options?) {
+  constructor(
+    name: RedisField,
+    options?: {
+      weight: number;
+      sortable: boolean;
+      noStem: boolean;
+      noIndex: boolean;
+    },
+  ) {
     const { weight = 1.0, sortable = false, noStem = false, noIndex = false } = options || {};
 
-    const args = [Field.TEXT, Field.WEIGHT, weight];
+    const args: RedisField[] = [Field.TEXT, Field.WEIGHT, weight];
 
     if (sortable) {
       args.push(Field.SORTABLE);

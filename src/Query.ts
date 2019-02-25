@@ -1,7 +1,11 @@
 import { Filter } from './filter/Filter';
-import { Languages, FieldName, RedisArg } from './RedisSearch';
+import { Languages, RedisField } from './Client';
+
+type SortDirection = 'ASC' | 'DESC';
 
 export class Query {
+  public _noContent = false;
+  public _withPayloads = false;
   /*
         Query is used to build complex queries that have more parameters than just the query string.
         The query string is set in the constructor, and other options have setter functions.
@@ -9,26 +13,24 @@ export class Query {
         i.e. `Query("foo").verbatim().filter(...)` etc.
     */
 
-  private queryString: string;
+  private queryString: RedisField;
 
   private _offset = 0;
   private _num = 10;
-  private _noContent = false;
   private _noStopWords = false;
-  private _fields: string[] = [];
+  private _fields: RedisField[] = [];
   private _verbatim = false;
-  private _withPayloads = false;
   private _filters: Filter[] = [];
-  private _ids: Array<string | number> = [];
+  private _ids: RedisField[] = [];
   private _slop = -1;
   private _inOrder = false;
-  private _sortByFields: { [s: string]: 'ASC' | 'DESC' } = {};
-  private _returnFields: string[] = [];
-  private _summarizeFields: RedisArg[] = [];
-  private _highlightFields: string[] = [];
-  private _language: Languages = 'dm:en';
+  private _sortByFields: { [F in RedisField]: SortDirection } = {};
+  private _returnFields: RedisField[] = [];
+  private _summarizeFields: RedisField[] = [];
+  private _highlightFields: RedisField[] = [];
+  private _language: Languages = 'english';
 
-  constructor(queryString: string) {
+  constructor(queryString: RedisField) {
     /*
             Create a new query object. 
             The query string is set in the constructor, and other options have setter functions.
@@ -37,7 +39,7 @@ export class Query {
     this.queryString = queryString;
   }
 
-  public limitIds(ids: Array<string | number>) {
+  public limitIds(ids: RedisField[]): Query {
     /*
             Limit the results to a specific set of pre-known document ids of any length
         */
@@ -46,31 +48,24 @@ export class Query {
     return this;
   }
 
-  public hasContent() {
+  public hasContent(): boolean {
     return !this._noContent;
   }
 
-  public returnFields(fields: string[]) {
+  public returnFields(fields: RedisField[]): Query {
     this._returnFields = fields;
     return this;
   }
 
-  public _mkFieldList(fields?: string[] | string) {
-    /*
-            Only return values from these fields
-        */
-
+  public _mkFieldList(fields?: RedisField[] | RedisField): RedisField[] {
     if (!fields) {
       return [];
     }
 
-    if (typeof fields === 'string') {
-      return [fields];
-    }
-    return fields;
+    return Array.isArray(fields) ? fields : [fields];
   }
 
-  public summarize(options?: { fields: FieldName[]; contextLen: number; numFrags: number; sep: string }) {
+  public summarize(options?: { fields: RedisField[]; contextLen: number; numFrags: number; sep: string }): Query {
     /*
             Return an abridged format of the field, containing only the segments of
             the field which contain the matching term(s).
@@ -86,7 +81,7 @@ export class Query {
     let { fields = [] } = options || {};
     const { contextLen = null, numFrags = null, sep = null } = options || {};
 
-    const args: RedisArg[] = ['SUMMARIZE'];
+    const args: RedisField[] = ['SUMMARIZE'];
     fields = this._mkFieldList(fields);
 
     if (fields) {
@@ -109,7 +104,7 @@ export class Query {
     return this;
   }
 
-  public highlight(options?: { fields: string[]; tags: string[] }) {
+  public highlight(options?: { fields: RedisField[]; tags: RedisField[] }): Query {
     /*
             Apply specified markup to matched term(s) within the returned field(s)
                 - **fields** If specified then only those mentioned fields are highlighted, otherwise all fields are highlighted
@@ -119,7 +114,7 @@ export class Query {
     let { fields = [] } = options || {};
     const { tags = null } = options || {};
 
-    const args = ['HIGHLIGHT'];
+    const args: RedisField[] = ['HIGHLIGHT'];
     fields = this._mkFieldList(fields);
 
     if (fields.length) {
@@ -133,7 +128,7 @@ export class Query {
     return this;
   }
 
-  public language(language: Languages) {
+  public language(language: Languages): Query {
     /*
             Analyze the query as being in the specified language
             :param language: The language (e.g. `chinese` or `english`)
@@ -143,7 +138,7 @@ export class Query {
     return this;
   }
 
-  public slop(slop: number) {
+  public slop(slop: number): Query {
     /*
             Allow a maximum of N intervening non matched terms between phrase terms (0 means exact phrase)
         */
@@ -152,7 +147,7 @@ export class Query {
     return this;
   }
 
-  public inOrder() {
+  public inOrder(): Query {
     /*
             Match only documents where the query terms appear in the same order in the document.
             i.e. for the query 'hello world', we do not match 'world hello'
@@ -162,12 +157,12 @@ export class Query {
     return this;
   }
 
-  public getArgs() {
+  public getArgs(): RedisField[] {
     /*
             Format the redis arguments for this query and return them
         */
 
-    const args: Array<string | number> = [this.queryString];
+    const args: RedisField[] = [this.queryString];
 
     if (this._noContent) {
       args.push('NOCONTENT');
@@ -229,7 +224,7 @@ export class Query {
     return args;
   }
 
-  public paging(offset: number, num: number) {
+  public paging(offset: number, num: number): Query {
     /*
         Set the paging for the query (defaults to 0..10).
             - **offset**: Paging offset for the results. Defaults to 0
@@ -242,7 +237,7 @@ export class Query {
     return this;
   }
 
-  public verbatim() {
+  public verbatim(): Query {
     /*
             Set the query to be verbatim, i.e. use no query expansion or stemming
         */
@@ -251,7 +246,7 @@ export class Query {
     return this;
   }
 
-  public noContent() {
+  public noContent(): Query {
     /*
             Set the query to only return ids and not the document content
         */
@@ -260,7 +255,7 @@ export class Query {
     return this;
   }
 
-  public noStopWords() {
+  public noStopWords(): Query {
     /*
             Prevent the query from being filtered for stopwords. 
             Only useful in very big queries that you are certain contain no stopwords.     
@@ -270,7 +265,7 @@ export class Query {
     return this;
   }
 
-  public withPayloads() {
+  public withPayloads(): Query {
     /*
             Ask the engine to return document payloads
         */
@@ -279,7 +274,7 @@ export class Query {
     return this;
   }
 
-  public limitFields(fields: string[]) {
+  public limitFields(fields: RedisField[]): Query {
     /*
             Limit the search to specific TEXT fields only
                 - **fields**: A list of strings, case sensitive field names from the defined schema            
@@ -289,7 +284,7 @@ export class Query {
     return this;
   }
 
-  public addFilter(flt: Filter) {
+  public addFilter(flt: Filter): Query {
     /*
             Add a numeric or geo filter to the query. 
             **Currently only one of each filter is supported by the engine**
@@ -300,7 +295,7 @@ export class Query {
     return this;
   }
 
-  public sortBy(field: string, direction: 'ASC' | 'DESC' = 'DESC') {
+  public sortBy(field: RedisField, direction: SortDirection = 'DESC'): Query {
     this._sortByFields[field] = direction;
     return this;
   }

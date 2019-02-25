@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
-        "watch": true,
         "target": "es5",
         "module": "commonjs",
         "strict": true,
+        "declaration": true,
+        "outDir": "./lib",
     },
     "exclude": [
         "node_modules",
-        "index.js",
+        "src/index.ts",
         "**/*.spec.ts"
     ]
 }
