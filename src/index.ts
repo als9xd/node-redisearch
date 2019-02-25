@@ -1,9 +1,9 @@
-import { Client }  from './src/Client';
-import { TextField } from './src/field/TextField';
-import { NumericField } from './src/field/NumericField';
-import { GeoField } from './src/field/GeoField';   
-import { TagField } from './src/field/TagField';   
-import { Query } from './src/Query';
+import { Client }  from './Client';
+import { TextField } from './field/TextField';
+import { NumericField } from './field/NumericField';
+import { GeoField } from './field/GeoField';   
+import { TagField } from './field/TagField';   
+import { Query } from './Query';
 
 module.exports = {
     Client,
