@@ -1,6 +1,6 @@
 {
   "name": "node-redisearch",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "",
   "files": ["lib/**/*"],
   "prepare" : "npm run build",
