@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "watch": true,
+        "target": "es5",
+        "module": "commonjs",
+        "strict": true,
+    },
+    "exclude": [
+        "node_modules",
+        "index.js",
+        "**/*.spec.ts"
+    ]
+}
