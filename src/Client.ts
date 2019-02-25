@@ -223,10 +223,6 @@ export class Client {
           return reject(err);
         }
 
-        if (fields.id) {
-          delete fields.id;
-        }
-
         return resolve(new Document(id, fields));
       });
     });
