@@ -1,12 +1,14 @@
 {
   "name": "node-redisearch",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
-  "files": ["lib/**/*"],
-  "prepare" : "npm run build",
-  "prepublishOnly" : "npm run lint",
-  "preversion" : "npm run lint",
-  "postversion" : "git push && git push --tags",
+  "files": [
+    "lib/**/*"
+  ],
+  "prepare": "npm run build",
+  "prepublishOnly": "npm run lint",
+  "preversion": "npm run lint",
+  "postversion": "git push && git push --tags",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
