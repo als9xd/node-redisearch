@@ -1,5 +1,5 @@
-import { Filter } from './filter/Filter';
 import { Languages, RedisField } from './Client';
+import { Filter } from './filter/Filter';
 
 type SortDirection = 'ASC' | 'DESC';
 

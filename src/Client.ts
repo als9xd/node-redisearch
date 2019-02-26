@@ -273,7 +273,7 @@ export class Client {
         }
         resolve(
           new Result(response, !builtQuery._noContent, {
-            duration: (new Date().getTime() - st),
+            duration: new Date().getTime() - st,
             hasPayload: builtQuery._withPayloads,
           }),
         );

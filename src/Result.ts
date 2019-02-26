@@ -1,5 +1,5 @@
-import { Document } from './Document';
 import { RedisField } from './Client';
+import { Document } from './Document';
 
 export class Result {
   /*
@@ -41,16 +41,16 @@ export class Result {
       const payload = hasPayload ? response[i + 1] : null;
       const fieldOffsets = hasPayload ? 2 : 1;
 
-      const fields:{ [F in RedisField]: RedisField } = {};
+      const fields: { [F in RedisField]: RedisField } = {};
 
       if (hasContent) {
-        response[i + fieldOffsets].forEach((field: RedisField, index:number) => {
+        response[i + fieldOffsets].forEach((field: RedisField, index: number) => {
           if (index % 2 === 0) {
             fields[field] = response[i + fieldOffsets][index + 1];
           }
         });
       }
-      const doc = new Document(id,fields, { payload });
+      const doc = new Document(id, fields, { payload });
 
       this.docs.push(doc);
     }
