@@ -11,10 +11,10 @@ export class TextField extends Field {
   constructor(
     name: RedisField,
     options?: {
-      weight: number;
-      sortable: boolean;
-      noStem: boolean;
-      noIndex: boolean;
+      weight?: number;
+      sortable?: boolean;
+      noStem?: boolean;
+      noIndex?: boolean;
     },
   ) {
     const { weight = 1.0, sortable = false, noStem = false, noIndex = false } = options || {};

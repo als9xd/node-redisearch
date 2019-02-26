@@ -8,8 +8,8 @@ export class NumericField extends Field {
   constructor(
     name: string,
     options?: {
-      sortable: boolean;
-      noIndex: boolean;
+      sortable?: boolean;
+      noIndex?: boolean;
     },
   ) {
     const { sortable = false, noIndex = false } = options || {};

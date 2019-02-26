@@ -9,8 +9,8 @@ export class TagField extends Field {
   constructor(
     name: string,
     options?: {
-      seperator: string;
-      noIndex: boolean;
+      seperator?: string;
+      noIndex?: boolean;
     },
   ) {
     super(name, [Field.TAG]);

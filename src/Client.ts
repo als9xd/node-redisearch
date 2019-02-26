@@ -64,11 +64,6 @@ export class Client {
     }
   }
 
-  /**
-   * My middleware
-   * @param {Request} req Express Request...
-   * @param {Response} res Express Response...
-   */
   public create(
     fields: Field[] = [],
     options?: {
