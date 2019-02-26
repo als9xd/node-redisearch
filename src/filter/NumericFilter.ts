@@ -9,8 +9,8 @@ export class NumericFilter extends Filter {
     minval: number,
     maxval: number,
     options?: {
-      minExclusive: boolean;
-      maxExclusive: boolean;
+      minExclusive?: boolean;
+      maxExclusive?: boolean;
     },
   ) {
     const { minExclusive = false, maxExclusive = false } = options || {};

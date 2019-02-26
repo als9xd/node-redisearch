@@ -14,8 +14,8 @@ export class Result {
     response: any,
     hasContent: boolean,
     options?: {
-      hasPayload: boolean;
-      duration: number;
+      hasPayload?: boolean;
+      duration?: number;
     },
   ) {
     /*

@@ -14,7 +14,7 @@ export class GeoFilter extends Filter {
     lat: number,
     radius: number,
     options?: {
-      unit: Unit;
+      unit?: Unit;
     },
   ) {
     const { unit = GeoFilter.KILOMETERS } = options || {};

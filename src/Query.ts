@@ -65,7 +65,7 @@ export class Query {
     return Array.isArray(fields) ? fields : [fields];
   }
 
-  public summarize(options?: { fields: RedisField[]; contextLen: number; numFrags: number; sep: string }): Query {
+  public summarize(options?: { fields?: RedisField[]; contextLen?: number; numFrags?: number; sep?: string }): Query {
     /*
             Return an abridged format of the field, containing only the segments of
             the field which contain the matching term(s).
@@ -104,7 +104,7 @@ export class Query {
     return this;
   }
 
-  public highlight(options?: { fields: RedisField[]; tags: RedisField[] }): Query {
+  public highlight(options?: { fields?: RedisField[]; tags?: RedisField[] }): Query {
     /*
             Apply specified markup to matched term(s) within the returned field(s)
                 - **fields** If specified then only those mentioned fields are highlighted, otherwise all fields are highlighted

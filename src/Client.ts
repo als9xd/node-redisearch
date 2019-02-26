@@ -40,9 +40,9 @@ export class Client {
   constructor(
     indexName: RedisField,
     options?: {
-      host: string;
-      port: number;
-      conn: any;
+      host?: string;
+      port?: number;
+      conn?: any;
     },
   ) {
     /*
@@ -67,9 +67,9 @@ export class Client {
   public create(
     fields: Field[] = [],
     options?: {
-      noTermOffsets: boolean;
-      noFieldFlags: boolean;
-      stopWords: RedisField | RedisField[];
+      noTermOffsets?: boolean;
+      noFieldFlags?: boolean;
+      stopWords?: RedisField | RedisField[];
     },
   ): Promise<boolean> {
     /*
@@ -133,12 +133,12 @@ export class Client {
     id: string | number,
     fields: { [F in RedisField]: RedisField } = {},
     options?: {
-      noSave: boolean;
-      replace: boolean;
-      score: number;
-      payload: string | number;
-      partial: boolean;
-      language: Languages;
+      noSave?: boolean;
+      replace?: boolean;
+      score?: number;
+      payload?: string | number;
+      partial?: boolean;
+      language?: Languages;
     },
   ): Promise<boolean> {
     const { noSave = false, score = 1.0, payload = null, replace = false, partial = false, language = null } =
@@ -183,7 +183,7 @@ export class Client {
     });
   }
 
-  public del(id: string | number, options?: { dd: boolean }): Promise<boolean> {
+  public del(id: string | number, options?: { dd?: boolean }): Promise<boolean> {
     /*
             Delete a document from index
             Returns 1 if the document was deleted, 0 if not
