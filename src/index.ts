@@ -5,7 +5,7 @@ import { GeoField } from './field/GeoField';
 import { TagField } from './field/TagField';   
 import { Query } from './Query';
 
-export default {
+export {
     Client,
     TextField,
     NumericField,
